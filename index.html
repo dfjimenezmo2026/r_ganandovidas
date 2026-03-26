@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Iglesia Ministerio Internacional Desafío</title>
+    <meta name="theme-color" content="#FF9800">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #FDE8C5; /* Pale cream from images */
+            --bg-topbar: linear-gradient(90deg, #F8B42D 0%, #FF9100 100%);
+            --tab-bg: #F5CD7A;
+            --tab-active-bg: #1F1912;
+            --tab-active-text: #F3BC55;
+            --text-main: #2A2118;
+            --text-light: #FFFFFF;
+            
+            --font-title: 'Cinzel', serif;
+            --font-body: 'Raleway', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            background: var(--bg-topbar);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 12px; }
+
+        .menu-btn {
+            background: none; border: none; font-size: 24px; color: var(--text-main);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+
+        .topbar-title { font-size: 18px; font-weight: 600; }
+
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+
+        .search-icon { font-size: 20px; cursor: pointer; }
+
+        /* LIVE BADGE */
+        .live-badge {
+            background-color: #E53935; color: white; font-size: 10px; font-weight: 700;
+            padding: 3px 6px; border-radius: 4px; letter-spacing: 0.5px;
+            animation: pulse-live 1.5s infinite; text-align: center; white-space: nowrap;
+        }
+        @keyframes pulse-live {
+            0% { box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(229, 57, 53, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(229, 57, 53, 0); }
+        }
+
+        /* TABS */
+        .tabs-wrapper {
+            background-color: var(--bg-body); padding: 12px 16px; flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); z-index: 40;
+        }
+
+        .tabs-scroll {
+            display: flex; overflow-x: auto; gap: 10px; scrollbar-width: none;
+        }
+        .tabs-scroll::-webkit-scrollbar { display: none; }
+
+        .tab {
+            background-color: var(--tab-bg); border: none; padding: 8px 16px;
+            border-radius: 6px; font-family: var(--font-body); font-size: 14px;
+            font-weight: 600; color: var(--text-main); cursor: pointer;
+            white-space: nowrap; transition: all 0.2s ease;
+        }
+        .tab.active {
+            background-color: var(--tab-active-bg); color: var(--tab-active-text);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1; overflow-y: auto; padding: 0 16px 80px 16px; position: relative;
+        }
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* MAIN LOGO */
+        .main-logo-container { text-align: center; padding: 15px 0 20px 0; }
+        .logo-text-title {
+            font-family: var(--font-title); font-size: 26px; font-weight:700;
+            line-height: 1.1; margin-top: 5px; color: var(--text-main); letter-spacing: 1px;
+        }
+        .logo-text-subtitle {
+            display:block; font-size:12px; font-weight:600; font-family: var(--font-title);
+            letter-spacing:1px; margin-bottom:2px;
+        }
+
+        /* CARDS */
+        .card {
+            background-color: #fff; border-radius: 12px; overflow: hidden; margin-bottom: 20px;
+            position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer;
+        }
+        .card-img-wrapper { position: relative; width: 100%; height: 220px; }
+        .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        .card-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 40%, rgba(0,0,0,0.8) 100%);
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 16px; color: #fff;
+        }
+        .card-title {
+            font-family: var(--font-title); font-size: 20px; font-weight: 600;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8); margin-bottom: 4px;
+        }
+        .card-subtitle {
+            font-size: 13px; font-weight: 500; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); opacity: 0.9;
+        }
+        .card-meta {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            font-size: 12px; opacity: 0.8; margin-top: auto;
+        }
+        
+        .card.ministro .card-overlay {
+            background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, transparent 60%, rgba(255,255,255,0.9) 100%);
+            color: var(--text-main);
+        }
+        .card.ministro .card-title, .card.ministro .card-subtitle { text-shadow: none; }
+
+        /* PLAYER BAR */
+        .player-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+            background-color: var(--bg-body); border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex; align-items: center; padding: 0 16px; gap: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 50;
+        }
+        .play-btn {
+            width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--text-main);
+            background: transparent; color: var(--text-main); display: flex; align-items: center;
+            justify-content: center; font-size: 16px; cursor: pointer; flex-shrink: 0; transition: all 0.2s;
+        }
+        .play-btn svg { width: 20px; height: 20px; fill: currentColor; margin-left: 3px; }
+        .play-btn.playing svg { margin-left: 0; }
+
+        .player-info {
+            flex: 1; font-size: 14px; font-weight: 600; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .equalizer {
+            display: flex; align-items: flex-end; gap: 2px; height: 20px;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .equalizer.active { opacity: 1; }
+        .eq-bar {
+            width: 4px; background-color: var(--text-main); border-radius: 2px;
+            animation: equalize 1s ease-in-out infinite;
+        }
+        .eq-bar:nth-child(1) { height: 10px; animation-duration: 0.9s; }
+        .eq-bar:nth-child(2) { height: 15px; animation-duration: 1.1s; }
+        .eq-bar:nth-child(3) { height: 12px; animation-duration: 0.8s; }
+        .eq-bar:nth-child(4) { height: 18px; animation-duration: 1.2s; }
+        .eq-bar:nth-child(5) { height: 8px; animation-duration: 0.7s; }
+        @keyframes equalize { 0%, 100% { transform: scaleY(0.5); } 50% { transform: scaleY(1); } }
+
+        /* SIDEBAR */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 99;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .sidebar {
+            position: fixed; top: 0; left: -300px; width: 280px; height: 100%;
+            background: var(--bg-body); z-index: 100; box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease; display: flex; flex-direction: column; overflow-y: auto;
+        }
+        .sidebar.open { transform: translateX(300px); }
+        .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
+        .sidebar-header {
+            background: var(--bg-topbar); padding: 20px 16px; display: flex;
+            justify-content: space-between; align-items: center; font-family: var(--font-title);
+            font-size: 18px; font-weight: 700;
+        }
+        .sidebar-close { background: none; border: none; font-size: 24px; color: var(--text-main); cursor: pointer; }
+        .sidebar-content { padding: 20px 16px; flex: 1; }
+        .sidebar-section { margin-bottom: 24px; }
+        .sidebar-subtitle {
+            font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;
+            color: rgba(42, 33, 24, 0.5); margin-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 4px;
+        }
+        .sidebar-link {
+            display: block; padding: 10px 0; color: var(--text-main); text-decoration: none;
+            font-weight: 600; font-size: 15px; transition: color 0.2s; cursor: pointer;
+        }
+        .sidebar-link:active { color: #FF9800; }
+        .sidebar-footer {
+            padding: 16px; text-align: center; font-size: 13px; font-style: italic; opacity: 0.8;
+            border-top: 1px solid rgba(0,0,0,0.05); margin-top: auto; font-family: var(--font-title); font-weight: 600;
+        }
+
+        /* IFRAME MODAL */
+        .iframe-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff;
+            z-index: 200; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.3s ease;
+        }
+        .iframe-modal.open { transform: translateY(0); }
+        .modal-header {
+            background: var(--bg-topbar); height: 60px; display: flex; align-items: center; padding: 0 16px; gap: 16px;
+        }
+        .modal-back { background: none; border: none; font-size: 24px; color: var(--text-main); cursor: pointer; }
+        .modal-title { font-family: var(--font-title); font-size: 18px; font-weight: 600; }
+        .modal-body { flex: 1; width: 100%; }
+        .modal-body iframe { width: 100%; height: 100%; border: none; }
+
+        /* EXTRA SECTIONS */
+        .section-title { font-family: var(--font-title); font-size: 22px; margin: 10px 0 20px 0; text-align: center; color: #d88100; font-weight: 700; }
+        
+        .event-card {
+            background: #fff; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 16px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .event-date { background: var(--bg-topbar); color: var(--text-main); border-radius: 8px; padding: 10px; text-align: center; min-width: 65px; }
+        .event-day { font-size: 24px; font-weight: 700; line-height: 1; font-family: var(--font-title); }
+        .event-month { font-size: 12px; font-weight: 600; text-transform: uppercase; margin-top: 4px; }
+        .event-details h3 { font-family: var(--font-title); font-size: 18px; margin-bottom: 4px; }
+        .event-details p { font-size: 14px; opacity: 0.8; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-input {
+            width: 100%; padding: 12px 16px; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px;
+            font-family: var(--font-body); font-size: 15px; background: rgba(255,255,255,0.7);
+        }
+        .form-btn {
+            width: 100%; padding: 14px; background: var(--text-main); color: #fff; border: none;
+            border-radius: 8px; font-family: var(--font-body); font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 8px;
+        }
+
+        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .product-item {
+            background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.05); text-align: center; padding-bottom: 12px;
+        }
+        .product-item img { width: 100%; height: 140px; object-fit: cover; }
+        .product-name { font-weight: 600; font-size: 14px; margin: 10px 8px 4px 8px; }
+        .product-price { color: #d88100; font-weight: 700; font-size: 15px; }
+
+        .yt-wrapper {
+            position: relative; padding-bottom: 56.25%; height: 0; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: #000; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .yt-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        .full-channel-btn {
+            display: block; width: 100%; padding: 12px; text-align: center; background: #FF0000; color: white;
+            border-radius: 8px; text-decoration: none; font-weight: bold; margin-bottom: 20px; font-family: var(--font-body); box-shadow: 0 2px 5px rgba(255,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span>Menú IMID</span>
+            <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+        </div>
+        <div class="sidebar-content">
+            <div class="sidebar-section">
+                <div class="sidebar-subtitle">Redes Sociales</div>
+                <a class="sidebar-link" onclick="openModal('https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Figlesiamid&tabs=timeline&width=340&height=500&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true&appId', 'Facebook IMID')">Facebook</a>
+                <a class="sidebar-link" onclick="openModal('https://www.youtube.com/embed?listType=user_uploads&list=ganandovidasimid5228', 'YouTube IMID')">YouTube @ganandovidasimid5228</a>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-subtitle">Contenido</div>
+                <a class="sidebar-link" onclick="switchTab('radio', true); closeSidebar();">Noticias IMID</a>
+                <a class="sidebar-link" onclick="switchTab('fotos', true); closeSidebar();">Fotos IMID</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-subtitle">Ministerios</div>
+                <a class="sidebar-link" onclick="openModal('https://www.youtube.com/embed?listType=search&list=Generacion+Desafio+Kids+IMID', 'Desafío Kids')">Generación Desafío Kids</a>
+                <a class="sidebar-link" onclick="switchTab('labor', true); closeSidebar();">Labor Social IMID</a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-subtitle">Más</div>
+                <a class="sidebar-link" onclick="switchTab('tienda', true); closeSidebar();">Tienda IMID</a>
+                <a class="sidebar-link" onclick="switchTab('contacto', true); closeSidebar();">Contáctenos</a>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            "Ganar vidas para el reino de Dios sin colocar límites"
+        </div>
+    </div>
+
+    <!-- IFRAME MODAL -->
+    <div class="iframe-modal" id="iframeModal">
+        <div class="modal-header">
+            <button class="modal-back" onclick="closeModal()">←</button>
+            <div class="modal-title" id="modalTitle">Ventana</div>
+        </div>
+        <div class="modal-body">
+            <iframe id="modalIframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="menu-btn" onclick="openSidebar()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <img src="/logo_Iglesia24.png" alt="" height="30" onerror="this.style.display='none'">
+            <div class="topbar-title" id="topbarTitle">Noticias IMID</div>
+        </div>
+        <div class="topbar-right">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+    </header>
+
+    <!-- TABS -->
+    <div class="tabs-wrapper">
+        <div class="tabs-scroll" id="tabsScroll">
+            <!-- 6 pestañas specified in instructions -->
+            <button class="tab active" data-target="radio" onclick="switchTab('radio')">Radio GV</button>
+            <button class="tab" data-target="cultos" onclick="switchTab('cultos')">Cultos</button>
+            <button class="tab" data-target="devocionales" onclick="switchTab('devocionales')">Devocionales</button>
+            <button class="tab" data-target="ministros" onclick="switchTab('ministros')">Ministros</button>
+            <button class="tab" data-target="programas" onclick="switchTab('programas')">Programas</button>
+            <button class="tab" data-target="eventos" onclick="switchTab('eventos')">Eventos</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP AREA -->
+    <main class="main-content" id="mainContent">
+        
+        <!-- GLOBAL APP LOGO SECTION -->
+        <div class="main-logo-container">
+            <!-- Using text presentation to simulate the requested logo if the image isn't available -->
+            <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 5px;">
+                <svg width="30" height="40" viewBox="0 0 24 24" fill="#E53935"><path d="M12 2C12 2 15 5 15 9C15 12.31 12 14.5 12 14.5C12 14.5 9 12.31 9 9C9 5 12 2 12 2ZM12 22C16.42 22 20 18.42 20 14C20 11.2 18.42 8.78 16.2 7.5C17.3 9.4 17.5 12.5 15.5 14.5C15.5 14.5 13 11 12 11C12 11 10.5 14.5 9.5 15.5C8.82 16.18 8 16.5 7.5 15C7.22 14.16 7.5 12.3 8.5 10C5.83 11.33 4 14.04 4 17.22C4 18.27 4.3 19.3 4.86 20.14C6.67 22.84 9.87 24 12 22Z"/></svg>
+                <div class="logo-text-title">
+                    <span class="logo-text-subtitle">IGLESIA MINISTERIO INTERNACIONAL</span>
+                    DESAFÍO
+                </div>
+                <!-- Globe Placeholder -->
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FF9100" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            </div>
+        </div>
+
+        <!-- 1. RADIO GV CONTENT -->
+        <section id="radio" class="page active">
+            <div class="card" onclick="openModal('https://www.youtube.com/embed/videoseries?list=UULP-ganandovidasimid5228', 'Ayuno Congregacional')">
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1510525009512-ad7fc13eefab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Ayuno">
+                    <div class="card-overlay">
+                        <div>
+                            <div class="card-title">Ayuno Congregacional</div>
+                            <div class="card-subtitle">Aprende a dominar tu carne</div>
+                        </div>
+                        <div class="card-meta"><span>♡ 16</span><span>7 months ago</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" onclick="openModal('https://www.youtube.com/embed/videoseries?list=UULP-ganandovidasimid5228', 'Mujeres Que Cambiaron La Historia')">
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1533461502717-83546f485d24?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mujeres">
+                    <div class="card-overlay">
+                        <div>
+                            <div class="card-title">Mujeres Que Cambiaron La Historia</div>
+                            <div class="card-subtitle">Extendemos nuestra invitación a esas mujeres...</div>
+                        </div>
+                        <div class="card-meta"><span>♡ 16</span><span>7 months ago</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" onclick="openModal('https://www.youtube.com/embed/videoseries?list=UULP-ganandovidasimid5228', 'Cielos Abiertos')">
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1605634575932-a567636ce729?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Cielos Abiertos">
+                    <div class="card-overlay">
+                        <div>
+                            <div class="card-title">¡Cielos Abiertos!</div>
+                            <div class="card-subtitle">Es tiempo de cielos abiertos, tiempo de agrd...</div>
+                        </div>
+                        <div class="card-meta"><span>♡ 14</span><span>7 months ago</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card" onclick="openModal('https://www.youtube.com/embed/videoseries?list=UULP-ganandovidasimid5228', 'Tiempos De Refrigerio')">
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1543886475-6b50db0ca3d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Tiempos">
+                    <div class="card-overlay">
+                        <div>
+                            <div class="card-title">Tiempos De Refrigerio</div>
+                            <div class="card-subtitle">Alimentante en la palabra de Jehová</div>
+                        </div>
+                        <div class="card-meta"><span>♡ 18</span><span>7 months ago</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. CULTOS -->
+        <section id="cultos" class="page">
+            <div class="section-title">Nuestros Cultos</div>
+            <a href="https://youtube.com/@ganandovidasimid5228" target="_blank" class="full-channel-btn">Abrir Canal en YouTube</a>
+            <div class="yt-wrapper">
+                <iframe src="https://www.youtube.com/embed/videoseries?list=PLy8X0-YI709P18I25L7c7JtGq8pD2m5-M" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- 3. DEVOCIONALES -->
+        <section id="devocionales" class="page">
+            <div class="section-title">Devocionales Diarios</div>
+            <div class="yt-wrapper">
+                <iframe src="https://www.youtube.com/embed/videoseries?list=UUganandovidasimid5228" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- 4. MINISTROS -->
+        <section id="ministros" class="page">
+            <div class="section-title">Nuestros Ministros</div>
+            <div class="card ministro">
+                <div class="card-img-wrapper" style="height: 280px;">
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Pastor Oscar" style="object-position: top;">
+                    <div class="card-overlay">
+                        <div>
+                            <div class="card-title">Pastor Oscar Álvarez</div>
+                            <div class="card-subtitle">Ministro Principal</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card ministro">
+                <div class="card-img-wrapper" style="height: 280px;">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Pastora Yolima" style="object-position: top;">
+                    <div class="card-overlay">
+                        <div>
+                            <div class="card-title">Pastora Yolima Álvarez</div>
+                            <div class="card-subtitle">Ministra Principal</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card ministro">
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lideres">
+                    <div class="card-overlay">
+                        <div>
+                            <div class="card-title">Líderes Fomil</div>
+                            <div class="card-subtitle">Todos Los Ministros</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. PROGRAMAS -->
+        <section id="programas" class="page">
+            <div class="section-title">Programas Especiales</div>
+            <div class="yt-wrapper">
+                <iframe src="https://www.youtube.com/embed/videoseries?list=PLy8X0-YI709P18I25L7c7JtGq8pD2m5-M" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- 6. EVENTOS -->
+        <section id="eventos" class="page">
+            <div class="section-title">Próximos Eventos</div>
+            <div class="event-card">
+                <div class="event-date"><div class="event-day">15</div><div class="event-month">Abr</div></div>
+                <div class="event-details">
+                    <h3>Vigilia de Poder</h3>
+                    <p>10:00 PM - 1:00 AM | Templo Central</p>
+                </div>
+            </div>
+            <div class="event-card">
+                <div class="event-date"><div class="event-day">28</div><div class="event-month">Abr</div></div>
+                <div class="event-details">
+                    <h3>Retiro de Jóvenes</h3>
+                    <p>Sábado 3:00 PM | Generación Desafío</p>
+                </div>
+            </div>
+            <div class="event-card">
+                <div class="event-date"><div class="event-day">05</div><div class="event-month">May</div></div>
+                <div class="event-details">
+                    <h3>Ayuno Congregacional</h3>
+                    <p>Domingo 8:45 AM | Aprende a dominar tu carne</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXTRA: TIENDA (from More menu) -->
+        <section id="tienda" class="page">
+            <div class="section-title">Tienda IMID</div>
+            <div class="products-grid">
+                <div class="product-item">
+                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Camiseta">
+                    <div class="product-name">Camiseta IMID</div>
+                    <div class="product-price">$35.000 COP</div>
+                </div>
+                <div class="product-item">
+                    <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Libro">
+                    <div class="product-name">Libro Devocional</div>
+                    <div class="product-price">$25.000 COP</div>
+                </div>
+                <div class="product-item">
+                    <img src="https://images.unsplash.com/photo-1588636159677-740751e18cd4?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Mug">
+                    <div class="product-name">Mug Ganando Vidas</div>
+                    <div class="product-price">$18.000 COP</div>
+                </div>
+                <div class="product-item">
+                    <img src="https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Bible">
+                    <div class="product-name">Biblia de Estudio</div>
+                    <div class="product-price">$90.000 COP</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXTRA: CONTACTO -->
+        <section id="contacto" class="page">
+            <div class="section-title">Contáctenos</div>
+            <form onsubmit="event.preventDefault(); alert('Mensaje enviado. ¡Dios le bendiga!'); this.reset();">
+                <div class="form-group"><input type="text" class="form-input" placeholder="Nombre Completo" required></div>
+                <div class="form-group"><input type="email" class="form-input" placeholder="Correo Electrónico" required></div>
+                <div class="form-group"><input type="tel" class="form-input" placeholder="Teléfono" required></div>
+                <div class="form-group"><textarea class="form-input" rows="4" placeholder="Su Mensaje..." required></textarea></div>
+                <button type="submit" class="form-btn">Enviar Mensaje</button>
+            </form>
+        </section>
+
+        <!-- EXTRA: FOTOS -->
+        <section id="fotos" class="page">
+            <div class="section-title">Galería de Fotos</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <img src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" style="width:100%; height:160px; object-fit:cover; border-radius:8px;">
+                <img src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" style="width:100%; height:160px; object-fit:cover; border-radius:8px;">
+                <img src="https://images.unsplash.com/photo-1511674751480-15104ef050cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" style="width:100%; height:160px; object-fit:cover; border-radius:8px;">
+                <img src="https://images.unsplash.com/photo-1473621038790-b778b47501b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" style="width:100%; height:160px; object-fit:cover; border-radius:8px;">
+            </div>
+        </section>
+        
+        <!-- EXTRA: LABOR SOCIAL -->
+        <section id="labor" class="page">
+            <div class="section-title">Labor Social IMID</div>
+            <div class="card">
+                <div class="card-img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1593113580332-ceec88fcdceb?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Labor Social">
+                    <div class="card-overlay">
+                        <div>
+                            <div class="card-title">Impactando Comunidades</div>
+                            <div class="card-subtitle">Entregamos esperanza a los necesitados</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PLAYER BOTTOM BAR -->
+    <div class="player-bar">
+        <!-- SVG Play/Pause Button -->
+        <button class="play-btn" id="playBtn" onclick="toggleAudio()" aria-label="Play Radio">
+            <svg id="playIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <svg id="pauseIcon" viewBox="0 0 24 24" style="display:none; width:14px; height:14px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+        </button>
+        <div class="player-info">
+            <div style="display:flex; align-items:center;">
+                <span class="live-badge" style="margin-right: 8px;">EN VIVO</span>
+                <span style="font-size:12px; opacity:0.8;">Tu Radio Ganando Vidas</span>
+            </div>
+            <span id="playerText" style="margin-top:2px;">Transmitiendo 24 Horas...</span>
+        </div>
+        <div class="equalizer" id="equalizer">
+            <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+        </div>
+        <input type="range" class="vol-control" min="0" max="1" step="0.05" value="1" oninput="document.getElementById('radioStream').volume = this.value" style="width: 50px; margin-left: auto; accent-color: var(--text-main);">
+        <audio id="radioStream" src="https://virtual.multimusic.com.co:8004/stream" preload="none"></audio>
+    </div>
+
+    <script>
+        // Tab routing
+        function switchTab(tabId, hideSidebar = false) {
+            const titles = {
+                'radio': 'Noticias IMID', 'cultos': 'Cultos IMID', 'devocionales': 'Devocionales',
+                'ministros': 'Nuestros Ministros', 'programas': 'Programas Especiales',
+                'eventos': 'Próximos Eventos', 'tienda': 'Tienda IMID', 'contacto': 'Contáctenos',
+                'fotos': 'Galería de Fotos', 'labor': 'Labor Social IMID'
+            };
+            document.getElementById('topbarTitle').innerText = titles[tabId] || 'IMID App';
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById(tabId);
+            if(target) target.classList.add('active');
+
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            // Highlight main tabs
+            const tabBtn = document.querySelector(`.tab[data-target="${tabId}"]`);
+            if(tabBtn) {
+                tabBtn.classList.add('active');
+                tabBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+            
+            document.getElementById('mainContent').scrollTo({top:0, behavior:'smooth'});
+        }
+
+        // Sidebar logic
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('sidebarOverlay').classList.add('open');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('open');
+        }
+
+        // IFRAME MODAL logic
+        function openModal(url, title) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalIframe').src = url;
+            document.getElementById('iframeModal').classList.add('open');
+            closeSidebar();
+        }
+        function closeModal() {
+            document.getElementById('iframeModal').classList.remove('open');
+            setTimeout(() => { document.getElementById('modalIframe').src = ''; }, 300);
+        }
+
+        // Audio logic
+        const radio = document.getElementById('radioStream');
+        const playBtn = document.getElementById('playBtn');
+        const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
+        const equalizer = document.getElementById('equalizer');
+        const playerText = document.getElementById('playerText');
+
+        function toggleAudio() {
+            if (radio.paused) {
+                playerText.innerText = "Conectando...";
+                radio.play().then(() => {
+                    playBtn.classList.add('playing');
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                    equalizer.classList.add('active');
+                    playerText.innerText = "Crecimiento Espiritual...";
+                }).catch(e => {
+                    console.error(e);
+                    playerText.innerText = "Toque de nuevo (Bloqueo)";
+                });
+            } else {
+                radio.pause();
+                playBtn.classList.remove('playing');
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+                equalizer.classList.remove('active');
+                playerText.innerText = "Pausado";
+            }
+        }
+
+        // Service Worker registration with safe relative path
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(r => console.log('SW Registered'))
+                    .catch(e => console.error('SW Failed:', e));
+            });
+        }
+    </script>
+</body>
+</html>
