@@ -797,6 +797,8 @@
     <div class="tabs-wrapper">
         <div class="tabs-scroll" id="tabsScroll">
             <!-- 6 pestañas specified in instructions -->
+            <button class="tab" data-target="radioganandovidas" onclick="switchTab('radioganandovidas')">Radio Ganando
+                Vidas</button>
             <button class="tab active" data-target="radio" onclick="switchTab('radio')">Radio GV</button>
             <button class="tab" data-target="cultos" onclick="switchTab('cultos')">Cultos</button>
             <button class="tab" data-target="devocionales" onclick="switchTab('devocionales')">Devocionales</button>
@@ -814,6 +816,15 @@
             <img src="./logo_principal2.png" alt="Logo IMID"
                 style="max-width: 85%; height: auto; max-height: 120px; object-fit: contain;">
         </div>
+
+        <!-- NEW: RADIO GANANDO VIDAS -->
+        <section id="radioganandovidas" class="page">
+            <div class="section-title">Radio Ganando Vidas</div>
+            <div style="text-align: center; padding: 0 16px;">
+                <img src="./screengv.jpg" alt="Radio Ganando Vidas"
+                    style="max-width: 100%; border-radius: 12px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            </div>
+        </section>
 
         <!-- 1. RADIO GV CONTENT -->
         <section id="radio" class="page active">
@@ -1098,6 +1109,7 @@
         // Tab routing
         function switchTab(tabId, hideSidebar = false) {
             const titles = {
+                'radioganandovidas': 'Radio Ganando Vidas',
                 'radio': 'Noticias IMID', 'cultos': 'Cultos IMID', 'devocionales': 'Devocionales',
                 'ministros': 'Nuestros Ministros', 'programas': 'Programas Especiales',
                 'eventos': 'Próximos Eventos', 'tienda': 'Tienda IMID', 'contacto': 'Contáctenos',
