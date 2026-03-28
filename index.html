@@ -1039,7 +1039,7 @@
                     <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
             </button>
-            <img src="./logo_principal2.png" alt="Logo" height="30" onerror="this.style.display='none'">
+            <img id="topbarLogo" src="./logo_principal2.png" alt="Logo" height="30">
             <div class="topbar-title" id="topbarTitle">Noticias IMID</div>
         </div>
         <div class="topbar-right">
@@ -1071,7 +1071,7 @@
 
         <!-- GLOBAL APP LOGO SECTION -->
         <div class="main-logo-container">
-            <img src="./logo_principal2.png" alt="Logo IMID"
+            <img id="mainLogo" src="./logo_principal2.png" alt="Logo IMID"
                 style="max-width: 85%; height: auto; max-height: 120px; object-fit: contain;">
         </div>
 
@@ -1428,6 +1428,34 @@
             }
 
             document.getElementById('mainContent').scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Cambiar los logos dinámicamente por cada pestaña
+            const topbarLogo = document.getElementById('topbarLogo');
+            const mainLogo = document.getElementById('mainLogo');
+            
+            const logoMap = {
+                'radioganandovidas': './logo_radio.png',
+                'radio': './logo_noticias.png',
+                'cultos': './logo_cultos.png',
+                'devocionales': './logo_devocionales.png',
+                'ministros': './logo_ministros.png',
+                'programas': './logo_programas.png',
+                'eventos': './logo_eventos.png'
+            };
+            
+            const newLogoPath = logoMap[tabId] || `./logo_${tabId}.png`;
+            const defaultLogo = './logo_principal2.png';
+
+            const setLogo = (imgElement, path) => {
+                if (!imgElement) return;
+                const tempImg = new Image();
+                tempImg.onload = () => { imgElement.src = path; };
+                tempImg.onerror = () => { imgElement.src = defaultLogo; };
+                tempImg.src = path;
+            };
+
+            setLogo(topbarLogo, newLogoPath);
+            setLogo(mainLogo, newLogoPath);
         }
 
         // Sidebar logic
