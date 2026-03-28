@@ -557,7 +557,9 @@
             font-family: var(--font-title);
             font-weight: 700;
             font-size: 14px;
-            animation: marquee 10s linear infinite;
+            /* Se aumentó el tiempo a 25s para que vaya más lento y se añadió un retraso de 1.5s antes de iniciar */
+            animation: marquee 25s linear infinite;
+            animation-delay: 1.5s;
         }
 
         @keyframes marquee {
